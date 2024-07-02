@@ -1,0 +1,21 @@
+application:
+  path: spring-jpa/src/main/resources/input
+spring:
+  application:
+    name: spring-jpa
+  jpa:
+    hibernate:
+      ddl-auto: update
+      #ddl-auto: none
+    show-sql: true
+    properties:
+      #required - ?????? caching mode: Selective - ?????? entities ? @Cacheable-?????????? ????? ???????????? L2 cache.
+      javax.persistence.sharedCache.mode: ENABLE_SELECTIVE
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydatabase
+    username: myuser
+    password: secret
+    maxPoolSize: 10
