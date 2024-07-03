@@ -6,17 +6,40 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Testcontainers
 public class UserServiceTest {
     @Autowired
     private UserService userService;
 
     private UserDto testUserDto;
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("prop")
+            .withUsername("postgres")
+            .withPassword("pass")
+            .withExposedPorts(5432)
+            .withReuse(true);
+
+    @DynamicPropertySource
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url",
+                () -> String.format("jdbc:postgresql://localhost:%d/prop", postgres.getFirstMappedPort()));
+        registry.add("spring.datasource.username", () -> "postgres");
+        registry.add("spring.datasource.password", () -> "pass");
+    }
+
 
     @BeforeEach
     public void create() {

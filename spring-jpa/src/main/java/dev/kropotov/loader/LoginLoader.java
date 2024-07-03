@@ -2,6 +2,7 @@ package dev.kropotov.loader;
 
 import dev.kropotov.dto.LoginInputDto;
 import dev.kropotov.reader.FileReader;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -11,11 +12,13 @@ import java.util.List;
 
 
 @Component
+@RequiredArgsConstructor
 public class LoginLoader implements FileLoader<LoginInputDto> {
-    private final List<LoginInputDto> inputDtoList = new ArrayList<>();
+    private final FileReader fileReader;
 
     public List<LoginInputDto> loadDir(String path) {
-        for (String str : FileReader.scanDir(path)) {
+        List<LoginInputDto> inputDtoList = new ArrayList<>();
+        for (String str : fileReader.scanDir(path)) {
             LoginInputDto inputDto = new LoginInputDto();
             int counter = 0;
             for (String strField : str.split(" ")) {
@@ -23,8 +26,10 @@ public class LoginLoader implements FileLoader<LoginInputDto> {
                 field.setAccessible(true);
                 try {
                     if (field.getType() == LocalDateTime.class) {
-                        LocalDateTime dateTime = LocalDateTime.parse(strField);
-                        field.set(inputDto, dateTime);
+                         if(!strField.isBlank()) {
+                             LocalDateTime dateTime = LocalDateTime.parse(strField);
+                             field.set(inputDto, dateTime);
+                         }
                     } else {
                         field.set(inputDto, strField);
                     }

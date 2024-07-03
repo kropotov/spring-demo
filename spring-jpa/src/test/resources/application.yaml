@@ -1,0 +1,9 @@
+application:
+  path: ./src/test/resources/input
+spring:
+  application:
+    name: spring-jpa
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
