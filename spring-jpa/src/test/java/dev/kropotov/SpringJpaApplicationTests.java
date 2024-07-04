@@ -2,6 +2,7 @@ package dev.kropotov;
 
 import dev.kropotov.dto.LoginInputDto;
 import dev.kropotov.log.TestAopClass;
+import dev.kropotov.reader.FileReader;
 import dev.kropotov.utils.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Testcontainers
@@ -37,6 +40,8 @@ class SpringJpaApplicationTests {
 
     @Autowired
     TestAopClass testAopClass;
+    @Autowired
+    FileReader fileReader;
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
@@ -81,5 +86,10 @@ class SpringJpaApplicationTests {
         loginInputDto.setName(name);
         testAopClass.annotatedModifier(loginInputDto, newName);
         assertEquals(loginInputDto.getName(), newName);
+        File logFile = new File("testAnnotatedModifier.log");
+        assertTrue(fileReader.readFile(logFile)
+                .peek(System.out::println)
+                .anyMatch(str -> str.contains(name) && str.contains(newName)));
+        logFile.delete();
     }
 }

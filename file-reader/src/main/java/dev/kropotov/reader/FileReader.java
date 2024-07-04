@@ -21,7 +21,6 @@ public class FileReader {
             throw new FileNotFoundException(path + " is not a directory");
         }
         return Arrays.stream(dir.listFiles())
-                .peek(file -> System.out.println(file.getName()))
                 .flatMap(this::readFile)
                 .toList();
     }
@@ -38,7 +37,6 @@ public class FileReader {
         } catch (Exception ex) {
             ex.printStackTrace();//TODO: replace
         }
-        System.out.println(result);
         return result.stream();
     }
 

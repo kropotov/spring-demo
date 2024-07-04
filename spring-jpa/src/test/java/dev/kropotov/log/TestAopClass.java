@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TestAopClass {
-    @LogTransformation
+    @LogTransformation("testAnnotatedModifier.log")
     public void annotatedModifier(LoginInputDto inputDto, String newName) {
         inputDto.setName(newName);
         System.out.println("annotatedFunction");
